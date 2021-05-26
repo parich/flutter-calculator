@@ -98,7 +98,7 @@ class _MyAppState extends State<MyApp> {
                   ),
                   Row(
                     children: [
-                      myButton("CLEAR"),
+                      myButton("CLEAR."),
                       myButton("="),
                     ],
                   ),
