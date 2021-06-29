@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:math_expressions/math_expressions.dart';
 
 void main() {
   runApp(MyApp());
@@ -11,13 +12,32 @@ class MyApp extends StatefulWidget {
 
 class _MyAppState extends State<MyApp> {
   String result = "0";
+  String expression = "";
 
   buttonPressed(String value) {
     setState(() {
       if (value == "CLEAR") {
         result = "0";
+      } else if (value == ".") {
+        if (result.contains(".")) {
+          return;
+        } else {
+          result = result + value;
+        }
+      } else if (value == "=") {
+        expression = result.replaceAll("X", "*");
+        Parser p = Parser();
+        Expression exp = p.parse(expression);
+        ContextModel cm = ContextModel();
+        dynamic calculate = exp.evaluate(EvaluationType.REAL, cm);
+
+        result = "$calculate";
       } else {
-        result = value;
+        if (result == "0") {
+          result = value;
+        } else {
+          result = result + value;
+        }
       }
     });
   }
@@ -25,11 +45,13 @@ class _MyAppState extends State<MyApp> {
   Widget myButton(String buttonLabel) {
     return Expanded(
       child: OutlineButton(
-        padding: EdgeInsets.all(20),
+        padding: EdgeInsets.all(24),
         onPressed: () => buttonPressed(buttonLabel),
         child: Text(
           buttonLabel,
-          style: TextStyle(fontSize: 20),
+          style: TextStyle(
+            fontSize: 20,
+          ),
         ),
       ),
     );
@@ -38,38 +60,34 @@ class _MyAppState extends State<MyApp> {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      theme: ThemeData(
-        brightness: Brightness.dark,
-        primaryColor: Colors.lightBlue[800],
-        accentColor: Colors.cyan[600],
-        primarySwatch: Colors.grey,
-      ),
       debugShowCheckedModeBanner: false,
       home: Scaffold(
         appBar: AppBar(
+          backgroundColor: Colors.indigo,
           title: Text("Calculator"),
-          backgroundColor: Color(0xff885566),
         ),
         body: SafeArea(
           child: Column(
             children: [
               Container(
-                padding: EdgeInsets.symmetric(horizontal: 12, vertical: 30),
+                padding: EdgeInsets.symmetric(horizontal: 12, vertical: 24),
                 alignment: Alignment.centerRight,
                 child: Text(
                   result,
-                  style: TextStyle(fontSize: 50, fontWeight: FontWeight.bold),
+                  style: TextStyle(fontSize: 48, fontWeight: FontWeight.bold),
                 ),
               ),
-              Expanded(child: Divider()),
+              Expanded(
+                child: Divider(),
+              ),
               Column(
                 children: [
                   Row(
                     children: [
-                      myButton("1"),
-                      myButton("2"),
-                      myButton("3"),
-                      myButton("+"),
+                      myButton("7"),
+                      myButton("8"),
+                      myButton("9"),
+                      myButton("/"),
                     ],
                   ),
                   Row(
@@ -77,15 +95,15 @@ class _MyAppState extends State<MyApp> {
                       myButton("4"),
                       myButton("5"),
                       myButton("6"),
-                      myButton("-"),
+                      myButton("X"),
                     ],
                   ),
                   Row(
                     children: [
-                      myButton("7"),
-                      myButton("8"),
-                      myButton("9"),
-                      myButton("*"),
+                      myButton("1"),
+                      myButton("2"),
+                      myButton("3"),
+                      myButton("-"),
                     ],
                   ),
                   Row(
@@ -93,12 +111,12 @@ class _MyAppState extends State<MyApp> {
                       myButton("."),
                       myButton("0"),
                       myButton("00"),
-                      myButton("/"),
+                      myButton("+"),
                     ],
                   ),
                   Row(
                     children: [
-                      myButton("CLEAR."),
+                      myButton("CLEAR"),
                       myButton("="),
                     ],
                   ),
@@ -111,3 +129,4 @@ class _MyAppState extends State<MyApp> {
     );
   }
 }
+
